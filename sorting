@@ -1,0 +1,234 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define SIZE 10000
+
+void Exchangesort(int arr[]);
+
+void Mergesort(int list[], int left, int right);
+void Merge(int list[], int left, int mid, int right);
+
+void Quicksort(int arr[], int left, int right);
+int Partition(int list[], int left, int right);
+
+void swap(int arr[], int i, int j);
+void Heapify(int arr[], int size, int i);
+void Heapsort(int arr[], int size);
+
+void Radixsort(int arr[], int n);
+
+int main(void)
+{
+	clock_t s1,s2,s3,s4,s5, e1,e2,e3,e4,e5;
+	
+	int a[SIZE];
+	for (int i = 0; i < SIZE; i++) {
+		a[i] = rand()%(SIZE)+1;
+		for (int j = 0; j < i; j++) {
+			if (a[i] == a[j]) {
+				i--;
+			}
+		}
+	}
+
+	printf("배열 랜덤생성\n");
+	//for (int i = 0; i < SIZE; i++) {printf("%d ", a[i]);}
+	printf("\n\n");
+
+	int Exchange_arr[SIZE], Merge_arr[SIZE], Quick_arr[SIZE], Heap_arr[SIZE], Radix_arr[SIZE];
+
+	for (int i = 0; i < SIZE; i++) { Exchange_arr[i] = a[i]; }
+	for (int i = 0; i < SIZE; i++) { Merge_arr[i] = a[i]; }
+	for (int i = 0; i < SIZE; i++) { Quick_arr[i] = a[i]; }
+	for (int i = 0; i < SIZE; i++) { Heap_arr[i] = a[i]; }
+	for (int i = 0; i < SIZE; i++) { Radix_arr[i] = a[i]; }
+
+
+	
+
+	s1 = clock();
+	Exchangesort(Exchange_arr);
+	e1 = clock();
+	printf("Exchangesort로 정렬\n");
+	//for (int i = 0; i < SIZE; i++) { printf("%d ", Exchange_arr[i]); }
+	printf("Exchangesort 정렬시간 : %f\n", (float)(e1 - s1) / CLOCKS_PER_SEC);
+	printf("\n\n");
+
+
+	s2 = clock();
+	Mergesort(Merge_arr, 0, SIZE - 1);
+	e2 = clock();
+	printf("MergeSort로 정렬\n");
+	//for (int i = 0; i < SIZE; i++) { printf("%d ", Merge_arr[i]); }
+	printf("MergeSort 정렬시간 : %f\n", (float)(e2 - s2) / CLOCKS_PER_SEC);
+	printf("\n\n");
+
+	
+	s3 = clock();
+	Quicksort(Quick_arr, 0, SIZE - 1);
+	e3 = clock();
+	printf("Quicksort로 정렬\n");
+	//for (int i = 0; i < SIZE; i++) { printf("%d ", Quick_arr[i]); }
+	printf("Quicksort 정렬시간 : %f\n", (float)(e3 - s3) / CLOCKS_PER_SEC);
+	printf("\n\n");
+
+
+	s4 = clock();
+	Heapsort(Heap_arr, SIZE);
+	e4 = clock();
+	printf("Heapsort로 정렬\n");
+	//for (int i = 0; i < SIZE; i++) { printf("%d ", Heap_arr[i]); }
+	printf("Heapsort 정렬시간 : %f\n", (float)(e4 - s4) / CLOCKS_PER_SEC);
+	printf("\n\n");
+
+
+	s5 = clock();
+	Radixsort(Radix_arr, SIZE);
+	e5 = clock();
+	printf("Radixsort로 정렬\n");
+	//for (int i = 0; i < SIZE; i++) { printf("%d ", Radix_arr[i]); }
+	printf("Radixsort 정렬시간 : %f\n", (float)(e5 - s5) / CLOCKS_PER_SEC);
+	printf("\n\n");
+
+}
+
+void Exchangesort(int arr[]) {
+	int i, j, n, temp;
+	for (i = 0; i < SIZE; i++)
+	{
+		for (j = 0; j < SIZE - 1; j++)
+		{
+			if (arr[j] > arr[j + 1])
+			{                                 
+				temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+			}
+		}
+	}
+}
+
+
+
+void Merge(int arr[], int left, int mid, int right) {
+	int i, j, k, l;
+	i = left;
+	j = mid + 1;
+	k = left;
+	int sorted[SIZE] = { 0 };
+
+	while (i <= mid && j <= right) {
+		if (arr[i] <= arr[j])
+			sorted[k++] = arr[i++];
+		else
+			sorted[k++] = arr[j++];
+	}
+
+	if (i > mid) {
+		for (l = j; l <= right; l++)
+			sorted[k++] = arr[l];
+	}
+	else {
+		for (l = i; l <= mid; l++)
+			sorted[k++] = arr[l];
+	}
+
+	for (l = left; l <= right; l++) {
+		arr[l] = sorted[l];
+	}
+}
+void Mergesort(int arr[], int left, int right) {
+	int mid;
+
+	if (left < right) {
+		mid = (left + right) / 2;
+		Mergesort(arr, left, mid);
+		Mergesort(arr, mid + 1, right);
+		Merge(arr, left, mid, right);
+	}
+}
+
+
+
+
+void Quicksort(int arr[], int left, int right) {
+	if (left < right) {
+		int q = Partition(arr, left, right);
+		Quicksort(arr, left, q - 1);
+		Quicksort(arr, q + 1, right);
+	}
+}
+int Partition(int arr[], int left, int right) {
+	int pivot, temp, low, high;
+	low = left;
+	high = right + 1;
+	pivot = arr[left];
+	do {
+		do {
+			low++; 
+		} while (low <= right && arr[low] < pivot);
+		do {
+			high--;
+		} while (high >= left && arr[high] > pivot);
+		if (low < high) {
+			temp = arr[low];
+			arr[low] = arr[high];
+			arr[high] = temp;
+		}
+	} while (low < high);
+	temp = arr[left];
+	arr[left] = arr[high];
+	arr[high] = temp;
+	
+	return high;
+}
+
+
+void swap(int arr[], int i, int j) {
+	int temp = arr[i];
+	arr[i] = arr[j];
+	arr[j] = temp;
+}
+void Heapify(int arr[], int size, int i) {
+	int c = 2 * i + 1;
+
+	if (c < size - 1 && arr[c] < arr[c + 1])
+		c++;
+
+	if (c < size && arr[i] < arr[c])
+		swap(arr, i, c); 
+
+	if (c < size / 2)
+		Heapify(arr, size, c);
+}
+void Heapsort(int arr[], int size) {
+	for (int i = size / 2; i >= 0; i--) {
+		Heapify(arr, size, i);
+	}
+
+	for (int i = size - 1; i >= 0; i--) {
+		swap(arr, i, 0);
+		Heapify(arr, i, 0);
+	}
+}
+
+
+
+void Radixsort(int arr[], int size) {
+	int result[SIZE], max = 0;
+	int exp = 1;
+	for (int i = 0; i < size; i++) {
+		if (arr[i] > max) max = arr[i];
+	}
+	while (max / exp > 0) { 
+		int bucket[10] = { 0 };
+		for (int i = 0; i < size; i++) bucket[arr[i] / exp % 10]++;
+		for (int i = 1; i < 10; i++)bucket[i] += bucket[i - 1]; 
+		for (int i = size - 1; i >= 0; i--) {  
+			result[--bucket[arr[i] / exp % 10]] = arr[i];
+		}
+		for (int i = 0; i < size; i++) arr[i] = result[i]; 
+		exp *= 10;
+	}
+}
