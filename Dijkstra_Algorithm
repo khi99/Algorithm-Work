@@ -1,0 +1,95 @@
+#include <stdio.h>
+
+#define INF 9999
+#define VERTEX 6
+#define START_VERTEX 0
+
+int Choose_Shortest_Vertex();
+void Update_distance(int new_vertex);
+void Dijkstra();
+
+int distance[VERTEX];
+bool visit[VERTEX];
+/*
+int graph[VERTEX][VERTEX] = {
+{INF,6  ,2  ,INF},
+{6  ,INF,3  ,1  },
+{2  ,3  ,INF,5  },
+{INF,1  ,5  ,INF},
+};
+
+int graph[VERTEX][VERTEX] = { 
+{INF,4  ,2  ,INF,INF,INF},
+{4,  INF,INF,4  ,5  ,INF},
+{2  ,INF,INF,INF,4  ,INF},
+{INF,4  ,INF,INF,INF,1  },
+{INF,5  ,4  ,INF,INF,2  },
+{INF,INF,INF,1  ,2  ,INF}
+};*/
+
+int graph[VERTEX][VERTEX] = {
+{INF,5  ,INF,2  ,4  ,INF},
+{5  ,INF,3  ,3  ,INF,INF},
+{INF,3  ,INF,3  ,4  ,2  },
+{2  ,3  ,3  ,INF,1  ,INF},
+{4  ,INF,4  ,1  ,INF,2  },
+{INF,INF,2  ,INF,2  ,INF}
+};
+
+
+
+
+
+void Dijkstra()
+{
+	for (int i = 0; i < VERTEX; i++) { 
+		distance[i] = graph[START_VERTEX][i];
+		visit[i] = false;
+	}
+	distance[START_VERTEX] = 0;
+	visit[START_VERTEX] = true;
+
+	for (int i = 0; i < VERTEX - 1; i++) {
+		int new_vertex = Choose_Shortest_Vertex();
+
+		visit[new_vertex] = true;
+		Update_distance(new_vertex);
+	}
+}
+
+void Update_distance(int new_vertex)
+{
+	for (int i = 0; i < VERTEX; i++){
+		if (visit[i] == true) continue;
+		if (distance[i] > distance[new_vertex]+graph[new_vertex][i])
+			distance[i] = distance[new_vertex]+graph[new_vertex][i];
+	}
+}
+
+int Choose_Shortest_Vertex()
+{
+	int min_dist = INF, min_vertex = 0;
+
+	for (int i = 0; i < VERTEX; i++) {
+		if (visit[i] == true) continue;
+		if (distance[i] < min_dist) {
+			min_dist = distance[i];
+			min_vertex = i;
+		}
+	}
+	return min_vertex;
+}
+
+
+
+int main()
+{
+	Dijkstra();
+	printf("시작정점 %d번정점으로부터\n\n", START_VERTEX);
+	
+	for (int i = 0; i < VERTEX; i++){
+		printf("%d번정점까지의 최소거리 : %d\n", i, distance[i]);
+	}
+
+	return 0;
+}
